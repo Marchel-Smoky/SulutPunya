@@ -6,15 +6,13 @@ import {
   ShoppingCart, 
   MessageCircle, 
   ArrowLeft, 
-  ChevronLeft, 
-  ChevronRight, 
   Loader, 
   RefreshCw, 
   Home,
-  ChevronDown,
   MapPin
 } from "lucide-react";
 import Notification from "../components/Notification.jsx";
+import ProductCard from "../../components/ProductCard.jsx";
 
 export default function TokoProduk() {
   const { tokoId } = useParams();
@@ -262,7 +260,13 @@ export default function TokoProduk() {
                   <h3 className="text-sm font-medium text-gray-400 mb-3 px-1">Produk Unggulan</h3>
                   <div className="flex space-x-4 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
                     {mobileHorizontalProducts.map((p) => (
-                      <ProductCardHorizontal key={p.id} product={p} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} />
+                      <ProductCard 
+                        key={p.id} 
+                        product={p} 
+                        onAddToCart={handleAddToCart} 
+                        onBuyNow={handleBuyNow}
+                        layout="horizontal"
+                      />
                     ))}
                   </div>
                 </div>
@@ -274,7 +278,13 @@ export default function TokoProduk() {
                   <h3 className="text-sm font-medium text-gray-400 mb-3 px-1">Semua Produk</h3>
                   <div className="grid grid-cols-1 gap-4">
                     {mobileVerticalProducts.map((p) => (
-                      <ProductCardVertical key={p.id} product={p} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} />
+                      <ProductCard 
+                        key={p.id} 
+                        product={p} 
+                        onAddToCart={handleAddToCart} 
+                        onBuyNow={handleBuyNow}
+                        layout="vertical"
+                      />
                     ))}
                   </div>
                 </div>
@@ -289,7 +299,13 @@ export default function TokoProduk() {
                   <h3 className="text-lg font-medium text-gray-400 mb-4">Produk Unggulan</h3>
                   <div className="flex space-x-6 overflow-x-auto pb-6 -mx-2 px-2 scrollbar-hide">
                     {desktopHorizontalProducts.map((p) => (
-                      <ProductCardHorizontal key={p.id} product={p} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} isDesktop={true} />
+                      <ProductCard 
+                        key={p.id} 
+                        product={p} 
+                        onAddToCart={handleAddToCart} 
+                        onBuyNow={handleBuyNow}
+                        layout="horizontal"
+                      />
                     ))}
                   </div>
                 </div>
@@ -301,7 +317,13 @@ export default function TokoProduk() {
                   <h3 className="text-lg font-medium text-gray-400 mb-4">Produk Lainnya</h3>
                   <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
                     {desktopVerticalProducts.map((p) => (
-                      <ProductCardGrid key={p.id} product={p} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} />
+                      <ProductCard 
+                        key={p.id} 
+                        product={p} 
+                        onAddToCart={handleAddToCart} 
+                        onBuyNow={handleBuyNow}
+                        layout="grid"
+                      />
                     ))}
                   </div>
                 </div>
@@ -351,164 +373,3 @@ export default function TokoProduk() {
     </div>
   );
 }
-
-// Component untuk card horizontal (mobile & desktop)
-const ProductCardHorizontal = ({ product, onAddToCart, onBuyNow, isDesktop = false }) => (
-  <div className={`bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-[#5bc0be]/20 transition-all duration-300 border border-gray-700 hover:border-[#5bc0be]/30 group flex-shrink-0 ${
-    isDesktop ? "w-64" : "w-56"
-  }`}>
-    <div className="p-3">
-      {/* Product Image */}
-      {product.foto_url?.length > 0 ? (
-        <div className="relative overflow-hidden rounded-lg mb-3">
-          <img 
-            src={product.foto_url[0]} 
-            alt={product.nama} 
-            className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
-            loading="lazy"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        </div>
-      ) : (
-        <div className="w-full h-32 bg-gray-700 rounded-lg mb-3 flex items-center justify-center">
-          <div className="text-3xl text-gray-500">📷</div>
-        </div>
-      )}
-
-      {/* Product Info */}
-      <div className="flex-1">
-        <h3 className="font-bold text-sm mb-1 line-clamp-2 group-hover:text-[#5bc0be] transition-colors">
-          {product.nama}
-        </h3>
-        <p className="text-gray-300 text-xs mb-2 line-clamp-2">
-          {product.deskripsi || "Tidak ada deskripsi"}
-        </p>
-        <p className="text-yellow-400 font-bold text-sm mb-3">
-          Rp {product.harga.toLocaleString('id-ID')}
-        </p>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex gap-2">
-        <button 
-          onClick={() => onAddToCart(product)} 
-          className="flex-1 bg-[#5bc0be] py-2 rounded-lg font-semibold hover:bg-[#4aa8a6] transition-colors text-xs flex items-center justify-center gap-1"
-        >
-          <ShoppingCart size={12} />
-          <span>Keranjang</span>
-        </button>
-        <button 
-          onClick={() => onBuyNow(product)} 
-          className="flex-1 bg-green-500 py-2 rounded-lg font-semibold hover:bg-green-600 transition-colors text-xs"
-        >
-          Beli
-        </button>
-      </div>
-    </div>
-  </div>
-);
-
-// Component untuk card vertical (mobile)
-const ProductCardVertical = ({ product, onAddToCart, onBuyNow }) => (
-  <div className="bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 shadow-lg hover:shadow-[#5bc0be]/20 transition-all duration-300 border border-gray-700 hover:border-[#5bc0be]/30 group">
-    <div className="flex items-center gap-4">
-      {/* Product Image */}
-      {product.foto_url?.length > 0 ? (
-        <div className="relative flex-shrink-0">
-          <img 
-            src={product.foto_url[0]} 
-            alt={product.nama} 
-            className="w-16 h-16 object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
-            loading="lazy"
-          />
-        </div>
-      ) : (
-        <div className="w-16 h-16 bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
-          <div className="text-xl text-gray-500">📷</div>
-        </div>
-      )}
-
-      {/* Product Info */}
-      <div className="flex-1 min-w-0">
-        <h3 className="font-bold text-sm mb-1 line-clamp-1 group-hover:text-[#5bc0be] transition-colors">
-          {product.nama}
-        </h3>
-        <p className="text-gray-300 text-xs mb-2 line-clamp-2">
-          {product.deskripsi || "Tidak ada deskripsi"}
-        </p>
-        <p className="text-yellow-400 font-bold text-sm mb-3">
-          Rp {product.harga.toLocaleString('id-ID')}
-        </p>
-      </div>
-    </div>
-
-    {/* Action Buttons */}
-    <div className="flex gap-2 mt-3">
-      <button 
-        onClick={() => onAddToCart(product)} 
-        className="flex-1 bg-[#5bc0be] py-2 rounded-lg font-semibold hover:bg-[#4aa8a6] transition-colors text-xs flex items-center justify-center gap-1"
-      >
-        <ShoppingCart size={12} />
-        <span>Keranjang</span>
-      </button>
-      <button 
-        onClick={() => onBuyNow(product)} 
-        className="flex-1 bg-green-500 py-2 rounded-lg font-semibold hover:bg-green-600 transition-colors text-xs"
-      >
-        Beli Langsung
-      </button>
-    </div>
-  </div>
-);
-
-// Component untuk card grid (desktop)
-const ProductCardGrid = ({ product, onAddToCart, onBuyNow }) => (
-  <div className="bg-gray-800/80 backdrop-blur-sm p-4 rounded-xl shadow-lg hover:shadow-[#5bc0be]/20 transition-all duration-300 border border-gray-700 hover:border-[#5bc0be]/30 group">
-    {/* Product Image */}
-    {product.foto_url?.length > 0 ? (
-      <div className="relative overflow-hidden rounded-lg mb-3">
-        <img 
-          src={product.foto_url[0]} 
-          alt={product.nama} 
-          className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
-          loading="lazy"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      </div>
-    ) : (
-      <div className="w-full h-40 bg-gray-700 rounded-lg mb-3 flex items-center justify-center">
-        <div className="text-4xl text-gray-500">📷</div>
-      </div>
-    )}
-
-    {/* Product Info */}
-    <div className="flex-1">
-      <h3 className="font-bold text-sm mb-1 line-clamp-2 group-hover:text-[#5bc0be] transition-colors">
-        {product.nama}
-      </h3>
-      <p className="text-gray-300 text-xs mb-2 line-clamp-2">
-        {product.deskripsi || "Tidak ada deskripsi"}
-      </p>
-      <p className="text-yellow-400 font-bold text-sm mb-3">
-        Rp {product.harga.toLocaleString('id-ID')}
-      </p>
-    </div>
-
-    {/* Action Buttons */}
-    <div className="flex gap-2">
-      <button 
-        onClick={() => onAddToCart(product)} 
-        className="flex-1 bg-[#5bc0be] py-2 rounded-lg font-semibold hover:bg-[#4aa8a6] transition-colors text-xs flex items-center justify-center gap-1"
-      >
-        <ShoppingCart size={12} />
-        <span>Keranjang</span>
-      </button>
-      <button 
-        onClick={() => onBuyNow(product)} 
-        className="flex-1 bg-green-500 py-2 rounded-lg font-semibold hover:bg-green-600 transition-colors text-xs"
-      >
-        Beli
-      </button>
-    </div>
-  </div>
-);
