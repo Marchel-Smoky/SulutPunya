@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import App from "./App";
 
 //--- Seler ---//
-import Login from "./Seller/login.jsx";
+import Login from "./Seller/Login.jsx";
 import Register from "./Seller/Register";
 import SellerDashboard from "./Seller/Sellerdashboard";
 
@@ -53,3 +53,4 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     </BrowserRouter>
   </React.StrictMode>
 );
+
