@@ -166,13 +166,6 @@ export default function TokoProduk() {
     );
   }
 
-  // Split products for different layouts
-  const mobileHorizontalProducts = produk.slice(0, 3);
-  const mobileVerticalProducts = produk.slice(3);
-  
-  const desktopHorizontalProducts = produk.slice(0, 7);
-  const desktopVerticalProducts = produk.slice(7);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
       {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
@@ -255,11 +248,11 @@ export default function TokoProduk() {
             {/* Mobile Layout: 3 horizontal + vertical scroll */}
             <div className="block xl:hidden">
               {/* Horizontal Scroll untuk 3 item pertama */}
-              {mobileHorizontalProducts.length > 0 && (
+              {produk.length > 0 && (
                 <div className="mb-6">
                   <h3 className="text-sm font-medium text-gray-400 mb-3 px-1">Produk Unggulan</h3>
                   <div className="flex space-x-4 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
-                    {mobileHorizontalProducts.map((p) => (
+                    {produk.slice(0, 3).map((p) => (
                       <ProductCard 
                         key={p.id} 
                         product={p} 
@@ -273,11 +266,11 @@ export default function TokoProduk() {
               )}
 
               {/* Vertical List untuk item selanjutnya */}
-              {mobileVerticalProducts.length > 0 && (
+              {produk.length > 3 && (
                 <div>
                   <h3 className="text-sm font-medium text-gray-400 mb-3 px-1">Semua Produk</h3>
                   <div className="grid grid-cols-1 gap-4">
-                    {mobileVerticalProducts.map((p) => (
+                    {produk.slice(3).map((p) => (
                       <ProductCard 
                         key={p.id} 
                         product={p} 
@@ -294,11 +287,11 @@ export default function TokoProduk() {
             {/* Desktop Layout: 7 horizontal + vertical grid */}
             <div className="hidden xl:block">
               {/* Horizontal Scroll untuk 7 item pertama */}
-              {desktopHorizontalProducts.length > 0 && (
+              {produk.length > 0 && (
                 <div className="mb-8">
                   <h3 className="text-lg font-medium text-gray-400 mb-4">Produk Unggulan</h3>
                   <div className="flex space-x-6 overflow-x-auto pb-6 -mx-2 px-2 scrollbar-hide">
-                    {desktopHorizontalProducts.map((p) => (
+                    {produk.slice(0, 7).map((p) => (
                       <ProductCard 
                         key={p.id} 
                         product={p} 
@@ -312,11 +305,11 @@ export default function TokoProduk() {
               )}
 
               {/* Grid untuk item selanjutnya */}
-              {desktopVerticalProducts.length > 0 && (
+              {produk.length > 7 && (
                 <div>
                   <h3 className="text-lg font-medium text-gray-400 mb-4">Produk Lainnya</h3>
                   <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
-                    {desktopVerticalProducts.map((p) => (
+                    {produk.slice(7).map((p) => (
                       <ProductCard 
                         key={p.id} 
                         product={p} 
@@ -373,4 +366,3 @@ export default function TokoProduk() {
     </div>
   );
 }
-
