@@ -245,8 +245,9 @@ export default function TokoProduk() {
           </div>
         ) : (
           <div className="w-full">
-            {/* Grid Layout untuk semua device - 3 kolom */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {/* Grid Layout Responsif */}
+            {/* Mobile: 3 kolom, Tablet: 5 kolom, Desktop: 7 kolom */}
+            <div className="grid grid-cols-3 md:grid-cols-5 xl:grid-cols-7 gap-3 sm:gap-4 lg:gap-6">
               {produk.map((p) => (
                 <ProductCard 
                   key={p.id} 
@@ -258,7 +259,7 @@ export default function TokoProduk() {
               ))}
             </div>
 
-            {/* Info jumlah produk di footer grid */}
+            {/* Info jumlah produk */}
             <div className="text-center mt-8 pt-6 border-t border-gray-700/30">
               <p className="text-gray-400 text-sm">
                 Menampilkan semua {produk.length} produk
