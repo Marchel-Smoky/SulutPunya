@@ -9,7 +9,9 @@ import {
   Loader, 
   RefreshCw, 
   Home,
-  MapPin
+  MapPin,
+  Star,
+  Clock
 } from "lucide-react";
 import Notification from "../components/Notification.jsx";
 import ProductCard from "../components/ProdukCard.jsx";
@@ -45,7 +47,7 @@ export default function TokoProduk() {
 
       const { data: tokoData, error: tokoError } = await supabase
         .from("toko")
-        .select("id, nama, keterangan, logo, whatsapp, daerah")
+        .select("id, nama, keterangan, logo, whatsapp, daerah, created_at")
         .eq("id", id)
         .single();
 
@@ -54,7 +56,7 @@ export default function TokoProduk() {
 
       const { data: produkData, error: produkError } = await supabase
         .from("produk")
-        .select("id, nama, deskripsi, harga, foto_url, created_at")
+        .select("id, nama, deskripsi, harga, foto_url, created_at, stok")
         .eq("toko_id", tokoData.id)
         .order("created_at", { ascending: false });
 
@@ -131,34 +133,47 @@ export default function TokoProduk() {
     window.open(`https://wa.me/${toko.whatsapp}?text=${encodeURIComponent(msg)}`, "_blank");
   };
 
+  // Format tanggal bergabung
+  const formatJoinDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white flex flex-col items-center justify-center p-4">
-        <Loader className="animate-spin h-12 w-12 text-[#5bc0be] mb-4" />
-        <p className="text-gray-300 text-sm sm:text-base">Memuat toko...</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white flex flex-col items-center justify-center p-4">
+        <div className="text-center">
+          <Loader className="animate-spin h-16 w-16 text-[#5bc0be] mb-4 mx-auto" />
+          <p className="text-gray-300 text-lg font-medium">Memuat toko...</p>
+          <p className="text-gray-400 text-sm mt-2">Mohon tunggu sebentar</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white flex flex-col items-center justify-center p-4">
         <div className="text-center max-w-md mx-auto">
-          <div className="text-5xl sm:text-6xl mb-4">😢</div>
-          <h2 className="text-xl sm:text-2xl font-bold text-red-400 mb-2">Terjadi Kesalahan</h2>
-          <p className="text-gray-300 text-sm sm:text-base mb-6">{error}</p>
+          <div className="text-6xl mb-4">😢</div>
+          <h2 className="text-2xl font-bold text-red-400 mb-3">Terjadi Kesalahan</h2>
+          <p className="text-gray-300 text-base mb-6 bg-gray-800/50 p-4 rounded-xl">{error}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button 
               onClick={fetchData} 
-              className="bg-[#5bc0be] px-4 py-2 rounded-lg text-black font-semibold flex items-center justify-center gap-2 hover:bg-[#4aa8a6] transition-colors text-sm sm:text-base"
+              className="bg-[#5bc0be] px-6 py-3 rounded-xl text-black font-semibold flex items-center justify-center gap-2 hover:bg-[#4aa8a6] transition-all duration-300 text-base shadow-lg"
             >
-              <RefreshCw size={18} /> Coba Lagi
+              <RefreshCw size={20} /> Coba Lagi
             </button>
             <button 
               onClick={() => navigate("/")} 
-              className="bg-gray-600 px-4 py-2 rounded-lg text-white font-semibold flex items-center justify-center gap-2 hover:bg-gray-700 transition-colors text-sm sm:text-base"
+              className="bg-gray-700 px-6 py-3 rounded-xl text-white font-semibold flex items-center justify-center gap-2 hover:bg-gray-600 transition-all duration-300 text-base shadow-lg"
             >
-              <Home size={18} /> Beranda
+              <Home size={20} /> Beranda
             </button>
           </div>
         </div>
@@ -167,174 +182,164 @@ export default function TokoProduk() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
       {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
 
-      {/* Header */}
-      <header className="bg-gray-800/90 backdrop-blur-sm py-4 px-3 sm:px-4 lg:px-6 sticky top-0 z-50 border-b border-gray-700">
+      {/* Header dengan gradient yang menarik */}
+      <header className="bg-gradient-to-r from-gray-800 via-gray-800 to-gray-900 backdrop-blur-sm py-6 px-4 sm:px-6 lg:px-8 sticky top-0 z-50 border-b border-gray-700/50 shadow-2xl">
         <div className="max-w-7xl mx-auto">
           {/* Navigation */}
-          <div className="flex items-center justify-between mb-3 sm:mb-4">
+          <div className="flex items-center justify-between mb-4">
             <button 
               onClick={() => navigate(-1)} 
-              className="bg-white/10 p-2 rounded-lg hover:bg-white/20 transition-all duration-200 flex items-center gap-2"
+              className="bg-white/10 p-3 rounded-xl hover:bg-white/20 transition-all duration-300 flex items-center gap-2 group border border-white/10 hover:border-white/20"
             >
-              <ArrowLeft size={18} className="sm:w-5 sm:h-5" />
-              <span className="text-xs sm:text-sm hidden sm:block">Kembali</span>
+              <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+              <span className="text-sm font-medium hidden sm:block">Kembali</span>
             </button>
             
             <button 
               onClick={() => navigate("/keranjang")} 
-              className="bg-[#5bc0be] p-2 rounded-lg text-black font-semibold relative hover:bg-[#4aa8a6] transition-colors flex items-center gap-2"
+              className="bg-gradient-to-r from-[#5bc0be] to-[#4aa8a6] p-3 rounded-xl text-black font-semibold relative hover:from-[#4aa8a6] hover:to-[#3b8d8b] transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 group"
             >
-              <ShoppingCart size={18} className="sm:w-5 sm:h-5" />
+              <ShoppingCart size={20} className="group-hover:scale-110 transition-transform" />
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-lg animate-pulse">
                   {cartCount > 9 ? "9+" : cartCount}
                 </span>
               )}
-              <span className="text-xs sm:text-sm hidden sm:block">Keranjang</span>
+              <span className="text-sm hidden sm:block">Keranjang</span>
             </button>
           </div>
 
-          {/* Toko Info */}
+          {/* Toko Info dengan design yang lebih menarik */}
           <div className="text-center">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2 line-clamp-1">
+            {/* Logo atau Avatar Toko */}
+            <div className="flex justify-center mb-4">
+              {toko.logo ? (
+                <img
+                  src={toko.logo}
+                  alt={`Logo ${toko.nama}`}
+                  className="w-20 h-20 rounded-2xl object-cover border-4 border-[#5bc0be]/30 shadow-2xl"
+                />
+              ) : (
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#5bc0be] to-[#4aa8a6] flex items-center justify-center border-4 border-[#5bc0be]/30 shadow-2xl">
+                  <span className="text-2xl font-bold text-white">{toko.nama.charAt(0).toUpperCase()}</span>
+                </div>
+              )}
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
               {toko.nama}
             </h1>
-            <p className="text-gray-300 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2">
+            
+            <p className="text-gray-300 text-base sm:text-lg mb-3 max-w-2xl mx-auto leading-relaxed">
               {toko.keterangan}
             </p>
             
-            {/* Lokasi Toko */}
-            {toko.daerah && (
-              <div className="flex items-center justify-center gap-1 mb-3 sm:mb-4">
-                <MapPin size={14} className="text-[#5bc0be]" />
-                <span className="text-gray-400 text-xs sm:text-sm">{toko.daerah}</span>
+            {/* Info Tambahan Toko */}
+            <div className="flex flex-wrap justify-center gap-4 mb-4">
+              {/* Lokasi Toko */}
+              {toko.daerah && (
+                <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-2 rounded-lg border border-gray-600">
+                  <MapPin size={16} className="text-[#5bc0be]" />
+                  <span className="text-gray-300 text-sm">{toko.daerah}</span>
+                </div>
+              )}
+
+              {/* Tanggal Bergabung */}
+              {toko.created_at && (
+                <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-2 rounded-lg border border-gray-600">
+                  <Clock size={16} className="text-[#5bc0be]" />
+                  <span className="text-gray-300 text-sm">Bergabung {formatJoinDate(toko.created_at)}</span>
+                </div>
+              )}
+
+              {/* Jumlah Produk */}
+              <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-2 rounded-lg border border-gray-600">
+                <Star size={16} className="text-[#5bc0be]" />
+                <span className="text-gray-300 text-sm">{produk.length} Produk</span>
               </div>
-            )}
+            </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button 
                 onClick={openWhatsApp} 
-                className="bg-green-500 px-4 sm:px-5 py-2 rounded-xl text-black font-semibold hover:bg-green-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base flex-1 sm:flex-none"
+                className="bg-gradient-to-r from-green-500 to-green-600 px-6 py-3 rounded-xl text-white font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 text-base shadow-lg hover:shadow-xl hover:scale-105 group"
               >
-                <MessageCircle size={18} className="sm:w-5 sm:h-5" />
-                <span>Chat Toko</span>
+                <MessageCircle size={20} className="group-hover:scale-110 transition-transform" />
+                <span>Chat via WhatsApp</span>
               </button>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Produk Section */}
-      <main className="max-w-7xl mx-auto p-3 sm:p-4 lg:p-6 mt-4 sm:mt-6">
-        <div className="text-center mb-6 sm:mb-8">
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">Produk Kami</h2>
-          <p className="text-gray-400 text-sm sm:text-base">
-            {produk.length} produk tersedia
+      {/* Produk Section dengan grid yang rapi */}
+      <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 mt-6">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+            Katalog Produk
+          </h2>
+          <p className="text-gray-400 text-lg">
+            Temukan {produk.length} produk terbaik dari toko kami
           </p>
         </div>
 
         {produk.length === 0 ? (
-          <div className="text-center py-8 sm:py-12 lg:py-16 text-gray-400 bg-gray-800/50 rounded-2xl mx-2 sm:mx-0">
-            <div className="text-5xl sm:text-6xl mb-4">📦</div>
-            <p className="text-base sm:text-lg mb-2">Belum ada produk di toko ini.</p>
-            <p className="text-sm text-gray-500">Silakan hubungi toko untuk informasi lebih lanjut</p>
+          <div className="text-center py-16 bg-gray-800/30 rounded-3xl border-2 border-dashed border-gray-700 mx-2">
+            <div className="text-7xl mb-6">📦</div>
+            <h3 className="text-2xl font-bold text-gray-300 mb-3">Belum ada produk</h3>
+            <p className="text-gray-400 text-lg mb-6 max-w-md mx-auto">
+              Toko ini sedang mempersiapkan produk terbaik untuk Anda
+            </p>
+            <button 
+              onClick={openWhatsApp} 
+              className="bg-gradient-to-r from-[#5bc0be] to-[#4aa8a6] px-8 py-3 rounded-xl text-black font-semibold hover:from-[#4aa8a6] hover:to-[#3b8d8b] transition-all duration-300 text-lg shadow-lg hover:shadow-xl"
+            >
+              Tanya Pemilik Toko
+            </button>
           </div>
         ) : (
           <div className="w-full">
-            {/* Mobile Layout: 3 horizontal + vertical scroll */}
-            <div className="block xl:hidden">
-              {/* Horizontal Scroll untuk 3 item pertama */}
-              {produk.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-400 mb-3 px-1">Produk Unggulan</h3>
-                  <div className="flex space-x-4 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
-                    {produk.slice(0, 3).map((p) => (
-                      <ProductCard 
-                        key={p.id} 
-                        product={p} 
-                        onAddToCart={handleAddToCart} 
-                        onBuyNow={handleBuyNow}
-                        layout="horizontal"
-                      />
-                    ))}
-                  </div>
+            {/* Grid Produk - 3 kolom untuk semua device */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+              {produk.map((p, index) => (
+                <div 
+                  key={p.id} 
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <ProductCard 
+                    product={p} 
+                    onAddToCart={handleAddToCart} 
+                    onBuyNow={handleBuyNow}
+                    layout="grid"
+                  />
                 </div>
-              )}
-
-              {/* Vertical List untuk item selanjutnya */}
-              {produk.length > 3 && (
-                <div>
-                  <h3 className="text-sm font-medium text-gray-400 mb-3 px-1">Semua Produk</h3>
-                  <div className="grid grid-cols-1 gap-4">
-                    {produk.slice(3).map((p) => (
-                      <ProductCard 
-                        key={p.id} 
-                        product={p} 
-                        onAddToCart={handleAddToCart} 
-                        onBuyNow={handleBuyNow}
-                        layout="vertical"
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
+              ))}
             </div>
 
-            {/* Desktop Layout: 7 horizontal + vertical grid */}
-            <div className="hidden xl:block">
-              {/* Horizontal Scroll untuk 7 item pertama */}
-              {produk.length > 0 && (
-                <div className="mb-8">
-                  <h3 className="text-lg font-medium text-gray-400 mb-4">Produk Unggulan</h3>
-                  <div className="flex space-x-6 overflow-x-auto pb-6 -mx-2 px-2 scrollbar-hide">
-                    {produk.slice(0, 7).map((p) => (
-                      <ProductCard 
-                        key={p.id} 
-                        product={p} 
-                        onAddToCart={handleAddToCart} 
-                        onBuyNow={handleBuyNow}
-                        layout="horizontal"
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Grid untuk item selanjutnya */}
-              {produk.length > 7 && (
-                <div>
-                  <h3 className="text-lg font-medium text-gray-400 mb-4">Produk Lainnya</h3>
-                  <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
-                    {produk.slice(7).map((p) => (
-                      <ProductCard 
-                        key={p.id} 
-                        product={p} 
-                        onAddToCart={handleAddToCart} 
-                        onBuyNow={handleBuyNow}
-                        layout="grid"
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
+            {/* Info jumlah produk */}
+            <div className="text-center mt-12 pt-8 border-t border-gray-700/50">
+              <p className="text-gray-400 text-sm">
+                Menampilkan semua {produk.length} produk • Scroll untuk melihat lebih banyak
+              </p>
             </div>
           </div>
         )}
       </main>
 
       {/* Floating Action Button for Mobile */}
-      <div className="fixed bottom-4 right-4 sm:hidden z-40">
+      <div className="fixed bottom-6 right-6 sm:hidden z-40 animate-bounce">
         <button 
           onClick={() => navigate("/keranjang")} 
-          className="bg-[#5bc0be] p-3 rounded-full text-black font-semibold relative hover:bg-[#4aa8a6] transition-colors shadow-lg"
+          className="bg-gradient-to-r from-[#5bc0be] to-[#4aa8a6] p-4 rounded-full text-black font-semibold relative hover:from-[#4aa8a6] hover:to-[#3b8d8b] transition-all duration-300 shadow-2xl hover:scale-110 group"
         >
-          <ShoppingCart size={20} />
+          <ShoppingCart size={24} className="group-hover:scale-110 transition-transform" />
           {cartCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-lg animate-pulse">
               {cartCount > 9 ? "9+" : cartCount}
             </span>
           )}
@@ -342,27 +347,60 @@ export default function TokoProduk() {
       </div>
 
       {/* Bottom Navigation for Mobile */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-3 sm:hidden z-30">
-        <div className="flex justify-between items-center">
+      <nav className="fixed bottom-0 left-0 right-0 bg-gray-800/95 backdrop-blur-lg border-t border-gray-700 p-4 sm:hidden z-30">
+        <div className="flex justify-around items-center">
           <button 
             onClick={() => navigate(-1)} 
-            className="flex flex-col items-center text-gray-400 hover:text-white transition-colors"
+            className="flex flex-col items-center text-gray-300 hover:text-white transition-all duration-300 group"
           >
-            <ArrowLeft size={20} />
-            <span className="text-xs mt-1">Kembali</span>
+            <div className="bg-gray-700 p-3 rounded-xl group-hover:bg-gray-600 transition-colors">
+              <ArrowLeft size={20} />
+            </div>
+            <span className="text-xs mt-2 font-medium">Kembali</span>
           </button>
+          
           <button 
             onClick={openWhatsApp} 
-            className="flex flex-col items-center text-gray-400 hover:text-white transition-colors"
+            className="flex flex-col items-center text-gray-300 hover:text-white transition-all duration-300 group"
           >
-            <MessageCircle size={20} />
-            <span className="text-xs mt-1">Chat</span>
+            <div className="bg-green-500/20 p-3 rounded-xl group-hover:bg-green-500/30 transition-colors">
+              <MessageCircle size={20} className="text-green-400" />
+            </div>
+            <span className="text-xs mt-2 font-medium">Chat</span>
+          </button>
+
+          <button 
+            onClick={() => navigate("/")} 
+            className="flex flex-col items-center text-gray-300 hover:text-white transition-all duration-300 group"
+          >
+            <div className="bg-gray-700 p-3 rounded-xl group-hover:bg-gray-600 transition-colors">
+              <Home size={20} />
+            </div>
+            <span className="text-xs mt-2 font-medium">Home</span>
           </button>
         </div>
       </nav>
 
       {/* Add padding for mobile bottom nav */}
-      <div className="pb-16 sm:pb-0"></div>
+      <div className="pb-20 sm:pb-0"></div>
+
+      {/* Custom CSS untuk animasi */}
+      <style jsx>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.6s ease-out forwards;
+          opacity: 0;
+        }
+      `}</style>
     </div>
   );
 }
