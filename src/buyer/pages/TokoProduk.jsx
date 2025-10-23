@@ -168,13 +168,20 @@ export default function TokoProduk() {
     );
   }
 
+  // Split products for different layouts
+  const mobileHorizontalProducts = produk.slice(0, 3);
+  const mobileVerticalProducts = produk.slice(3);
+  
+  const desktopHorizontalProducts = produk.slice(0, 7);
+  const desktopVerticalProducts = produk.slice(7);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
       {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
 
       {/* Header */}
       <header className="bg-gray-800/90 backdrop-blur-sm py-4 px-3 sm:px-4 lg:px-6 sticky top-0 z-50 border-b border-gray-700">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           {/* Navigation */}
           <div className="flex items-center justify-between mb-3 sm:mb-4">
             <button 
@@ -231,7 +238,7 @@ export default function TokoProduk() {
       </header>
 
       {/* Produk Section */}
-      <main className="max-w-6xl mx-auto p-3 sm:p-4 lg:p-6 mt-4 sm:mt-6">
+      <main className="max-w-7xl mx-auto p-3 sm:p-4 lg:p-6 mt-4 sm:mt-6">
         <div className="text-center mb-6 sm:mb-8">
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">Produk Kami</h2>
           <p className="text-gray-400 text-sm sm:text-base">
@@ -246,60 +253,60 @@ export default function TokoProduk() {
             <p className="text-sm text-gray-500">Silakan hubungi toko untuk informasi lebih lanjut</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-            {produk.map((p) => (
-              <div 
-                key={p.id} 
-                className="bg-gray-800/80 backdrop-blur-sm p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-lg hover:shadow-[#5bc0be]/20 transition-all duration-300 border border-gray-700 hover:border-[#5bc0be]/30 group"
-              >
-                {/* Product Image */}
-                {p.foto_url?.length > 0 ? (
-                  <div className="relative overflow-hidden rounded-lg sm:rounded-xl mb-3 sm:mb-4">
-                    <img 
-                      src={p.foto_url[0]} 
-                      alt={p.nama} 
-                      className="w-full h-32 sm:h-40 lg:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="w-full">
+            {/* Mobile Layout: 3 horizontal + vertical scroll */}
+            <div className="block xl:hidden">
+              {/* Horizontal Scroll untuk 3 item pertama */}
+              {mobileHorizontalProducts.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-medium text-gray-400 mb-3 px-1">Produk Unggulan</h3>
+                  <div className="flex space-x-4 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
+                    {mobileHorizontalProducts.map((p) => (
+                      <ProductCardHorizontal key={p.id} product={p} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} />
+                    ))}
                   </div>
-                ) : (
-                  <div className="w-full h-32 sm:h-40 lg:h-48 bg-gray-700 rounded-lg sm:rounded-xl mb-3 sm:mb-4 flex items-center justify-center">
-                    <div className="text-4xl text-gray-500">📷</div>
+                </div>
+              )}
+
+              {/* Vertical List untuk item selanjutnya */}
+              {mobileVerticalProducts.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-400 mb-3 px-1">Semua Produk</h3>
+                  <div className="grid grid-cols-1 gap-4">
+                    {mobileVerticalProducts.map((p) => (
+                      <ProductCardVertical key={p.id} product={p} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} />
+                    ))}
                   </div>
-                )}
-
-                {/* Product Info */}
-                <div className="flex-1">
-                  <h3 className="font-bold text-base sm:text-lg mb-1 sm:mb-2 line-clamp-2 group-hover:text-[#5bc0be] transition-colors">
-                    {p.nama}
-                  </h3>
-                  <p className="text-gray-300 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2 sm:line-clamp-3">
-                    {p.deskripsi || "Tidak ada deskripsi"}
-                  </p>
-                  <p className="text-yellow-400 font-bold text-sm sm:text-base mb-3 sm:mb-4">
-                    Rp {p.harga.toLocaleString('id-ID')}
-                  </p>
                 </div>
+              )}
+            </div>
 
-                {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <button 
-                    onClick={() => handleAddToCart(p)} 
-                    className="flex-1 bg-[#5bc0be] py-2 sm:py-2.5 rounded-lg font-semibold hover:bg-[#4aa8a6] transition-colors text-xs sm:text-sm flex items-center justify-center gap-1"
-                  >
-                    <ShoppingCart size={14} className="sm:w-4 sm:h-4" />
-                    <span>Keranjang</span>
-                  </button>
-                  <button 
-                    onClick={() => handleBuyNow(p)} 
-                    className="flex-1 bg-green-500 py-2 sm:py-2.5 rounded-lg font-semibold hover:bg-green-600 transition-colors text-xs sm:text-sm"
-                  >
-                    Beli Langsung
-                  </button>
+            {/* Desktop Layout: 7 horizontal + vertical grid */}
+            <div className="hidden xl:block">
+              {/* Horizontal Scroll untuk 7 item pertama */}
+              {desktopHorizontalProducts.length > 0 && (
+                <div className="mb-8">
+                  <h3 className="text-lg font-medium text-gray-400 mb-4">Produk Unggulan</h3>
+                  <div className="flex space-x-6 overflow-x-auto pb-6 -mx-2 px-2 scrollbar-hide">
+                    {desktopHorizontalProducts.map((p) => (
+                      <ProductCardHorizontal key={p.id} product={p} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} isDesktop={true} />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              )}
+
+              {/* Grid untuk item selanjutnya */}
+              {desktopVerticalProducts.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-medium text-gray-400 mb-4">Produk Lainnya</h3>
+                  <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                    {desktopVerticalProducts.map((p) => (
+                      <ProductCardGrid key={p.id} product={p} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </main>
@@ -344,3 +351,164 @@ export default function TokoProduk() {
     </div>
   );
 }
+
+// Component untuk card horizontal (mobile & desktop)
+const ProductCardHorizontal = ({ product, onAddToCart, onBuyNow, isDesktop = false }) => (
+  <div className={`bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-[#5bc0be]/20 transition-all duration-300 border border-gray-700 hover:border-[#5bc0be]/30 group flex-shrink-0 ${
+    isDesktop ? "w-64" : "w-56"
+  }`}>
+    <div className="p-3">
+      {/* Product Image */}
+      {product.foto_url?.length > 0 ? (
+        <div className="relative overflow-hidden rounded-lg mb-3">
+          <img 
+            src={product.foto_url[0]} 
+            alt={product.nama} 
+            className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        </div>
+      ) : (
+        <div className="w-full h-32 bg-gray-700 rounded-lg mb-3 flex items-center justify-center">
+          <div className="text-3xl text-gray-500">📷</div>
+        </div>
+      )}
+
+      {/* Product Info */}
+      <div className="flex-1">
+        <h3 className="font-bold text-sm mb-1 line-clamp-2 group-hover:text-[#5bc0be] transition-colors">
+          {product.nama}
+        </h3>
+        <p className="text-gray-300 text-xs mb-2 line-clamp-2">
+          {product.deskripsi || "Tidak ada deskripsi"}
+        </p>
+        <p className="text-yellow-400 font-bold text-sm mb-3">
+          Rp {product.harga.toLocaleString('id-ID')}
+        </p>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex gap-2">
+        <button 
+          onClick={() => onAddToCart(product)} 
+          className="flex-1 bg-[#5bc0be] py-2 rounded-lg font-semibold hover:bg-[#4aa8a6] transition-colors text-xs flex items-center justify-center gap-1"
+        >
+          <ShoppingCart size={12} />
+          <span>Keranjang</span>
+        </button>
+        <button 
+          onClick={() => onBuyNow(product)} 
+          className="flex-1 bg-green-500 py-2 rounded-lg font-semibold hover:bg-green-600 transition-colors text-xs"
+        >
+          Beli
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
+// Component untuk card vertical (mobile)
+const ProductCardVertical = ({ product, onAddToCart, onBuyNow }) => (
+  <div className="bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 shadow-lg hover:shadow-[#5bc0be]/20 transition-all duration-300 border border-gray-700 hover:border-[#5bc0be]/30 group">
+    <div className="flex items-center gap-4">
+      {/* Product Image */}
+      {product.foto_url?.length > 0 ? (
+        <div className="relative flex-shrink-0">
+          <img 
+            src={product.foto_url[0]} 
+            alt={product.nama} 
+            className="w-16 h-16 object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
+          />
+        </div>
+      ) : (
+        <div className="w-16 h-16 bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
+          <div className="text-xl text-gray-500">📷</div>
+        </div>
+      )}
+
+      {/* Product Info */}
+      <div className="flex-1 min-w-0">
+        <h3 className="font-bold text-sm mb-1 line-clamp-1 group-hover:text-[#5bc0be] transition-colors">
+          {product.nama}
+        </h3>
+        <p className="text-gray-300 text-xs mb-2 line-clamp-2">
+          {product.deskripsi || "Tidak ada deskripsi"}
+        </p>
+        <p className="text-yellow-400 font-bold text-sm mb-3">
+          Rp {product.harga.toLocaleString('id-ID')}
+        </p>
+      </div>
+    </div>
+
+    {/* Action Buttons */}
+    <div className="flex gap-2 mt-3">
+      <button 
+        onClick={() => onAddToCart(product)} 
+        className="flex-1 bg-[#5bc0be] py-2 rounded-lg font-semibold hover:bg-[#4aa8a6] transition-colors text-xs flex items-center justify-center gap-1"
+      >
+        <ShoppingCart size={12} />
+        <span>Keranjang</span>
+      </button>
+      <button 
+        onClick={() => onBuyNow(product)} 
+        className="flex-1 bg-green-500 py-2 rounded-lg font-semibold hover:bg-green-600 transition-colors text-xs"
+      >
+        Beli Langsung
+      </button>
+    </div>
+  </div>
+);
+
+// Component untuk card grid (desktop)
+const ProductCardGrid = ({ product, onAddToCart, onBuyNow }) => (
+  <div className="bg-gray-800/80 backdrop-blur-sm p-4 rounded-xl shadow-lg hover:shadow-[#5bc0be]/20 transition-all duration-300 border border-gray-700 hover:border-[#5bc0be]/30 group">
+    {/* Product Image */}
+    {product.foto_url?.length > 0 ? (
+      <div className="relative overflow-hidden rounded-lg mb-3">
+        <img 
+          src={product.foto_url[0]} 
+          alt={product.nama} 
+          className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      </div>
+    ) : (
+      <div className="w-full h-40 bg-gray-700 rounded-lg mb-3 flex items-center justify-center">
+        <div className="text-4xl text-gray-500">📷</div>
+      </div>
+    )}
+
+    {/* Product Info */}
+    <div className="flex-1">
+      <h3 className="font-bold text-sm mb-1 line-clamp-2 group-hover:text-[#5bc0be] transition-colors">
+        {product.nama}
+      </h3>
+      <p className="text-gray-300 text-xs mb-2 line-clamp-2">
+        {product.deskripsi || "Tidak ada deskripsi"}
+      </p>
+      <p className="text-yellow-400 font-bold text-sm mb-3">
+        Rp {product.harga.toLocaleString('id-ID')}
+      </p>
+    </div>
+
+    {/* Action Buttons */}
+    <div className="flex gap-2">
+      <button 
+        onClick={() => onAddToCart(product)} 
+        className="flex-1 bg-[#5bc0be] py-2 rounded-lg font-semibold hover:bg-[#4aa8a6] transition-colors text-xs flex items-center justify-center gap-1"
+      >
+        <ShoppingCart size={12} />
+        <span>Keranjang</span>
+      </button>
+      <button 
+        onClick={() => onBuyNow(product)} 
+        className="flex-1 bg-green-500 py-2 rounded-lg font-semibold hover:bg-green-600 transition-colors text-xs"
+      >
+        Beli
+      </button>
+    </div>
+  </div>
+);
