@@ -219,7 +219,7 @@ export default function Login() {
           <p className="text-gray-400">
             Belum punya toko?{" "}
             <Link
-              to="/register"
+              to="/Register"
               className="text-yellow-400 hover:text-yellow-500 font-semibold transition-colors duration-300"
             >
               Daftar Sekarang
@@ -229,4 +229,5 @@ export default function Login() {
       </div>
     </div>
   );
+
 }
