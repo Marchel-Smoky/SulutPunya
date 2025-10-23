@@ -12,7 +12,7 @@ import {
   MapPin
 } from "lucide-react";
 import Notification from "../components/Notification.jsx";
-import ProductCard from "../../components/ProductCard.jsx";
+import ProductCard from "../components/ProdukCard.jsx";
 
 export default function TokoProduk() {
   const { tokoId } = useParams();
@@ -373,3 +373,4 @@ export default function TokoProduk() {
     </div>
   );
 }
+
