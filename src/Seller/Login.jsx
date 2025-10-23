@@ -162,7 +162,7 @@ export default function Login() {
               name="email"
               value={form.email}
               onChange={handleChange}
-              placeholder="Email Toko / Username Admin"
+              placeholder="Email Toko"
               className={`w-full p-3 rounded-xl bg-gray-800/60 border ${errors.email ? 'border-red-500' : 'border-gray-700'} text-white transition-colors duration-300`}
               disabled={loading}
             />
@@ -231,3 +231,4 @@ export default function Login() {
   );
 
 }
+
