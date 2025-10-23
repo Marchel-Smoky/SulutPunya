@@ -11,7 +11,8 @@ import {
   Loader, 
   RefreshCw, 
   Home,
-  ChevronDown 
+  ChevronDown,
+  MapPin
 } from "lucide-react";
 import Notification from "../components/Notification.jsx";
 
@@ -94,29 +95,29 @@ export default function TokoProduk() {
 
   // Add to cart
   const handleAddToCart = async (item) => {
-  if (!guestId) return;
-  try {
-    const { data, error } = await supabase
-      .from("keranjang")
-      .upsert(
-        {
-          guest_id: guestId,
-          produk_id: item.id,
-          nama: item.nama,
-          harga: item.harga,
-          jumlah: 1
-        },
-        { onConflict: ["guest_id", "produk_id"] } // pastikan kolom ini ada di table
-      );
+    if (!guestId) return;
+    try {
+      const { data, error } = await supabase
+        .from("keranjang")
+        .upsert(
+          {
+            guest_id: guestId,
+            produk_id: item.id,
+            nama: item.nama,
+            harga: item.harga,
+            jumlah: 1
+          },
+          { onConflict: ["guest_id", "produk_id"] }
+        );
 
-    if (error) throw error;
-    showNotification(`${item.nama} ditambahkan ke keranjang!`);
-    fetchCartCount();
-  } catch (err) {
-    console.error("Gagal tambah keranjang:", err.message);
-    showNotification("Gagal menambahkan ke keranjang", "error");
-  }
-};
+      if (error) throw error;
+      showNotification(`${item.nama} ditambahkan ke keranjang!`);
+      fetchCartCount();
+    } catch (err) {
+      console.error("Gagal tambah keranjang:", err.message);
+      showNotification("Gagal menambahkan ke keranjang", "error");
+    }
+  };
 
   const handleBuyNow = async (item) => {
     await handleAddToCart(item);
@@ -134,24 +135,31 @@ export default function TokoProduk() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <Loader className="animate-spin h-12 w-12 text-[#5bc0be]" />
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white flex flex-col items-center justify-center p-4">
+        <Loader className="animate-spin h-12 w-12 text-[#5bc0be] mb-4" />
+        <p className="text-gray-300 text-sm sm:text-base">Memuat toko...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
-        <div className="text-center max-w-md">
-          <div className="text-6xl mb-4">😢</div>
-          <h2 className="text-2xl font-bold text-red-400 mb-2">Terjadi Kesalahan</h2>
-          <p className="text-gray-300 mb-6">{error}</p>
-          <div className="flex gap-3 justify-center">
-            <button onClick={fetchData} className="bg-[#5bc0be] px-4 py-2 rounded-lg text-black font-semibold flex items-center gap-2 hover:bg-[#4aa8a6]">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white flex flex-col items-center justify-center p-4">
+        <div className="text-center max-w-md mx-auto">
+          <div className="text-5xl sm:text-6xl mb-4">😢</div>
+          <h2 className="text-xl sm:text-2xl font-bold text-red-400 mb-2">Terjadi Kesalahan</h2>
+          <p className="text-gray-300 text-sm sm:text-base mb-6">{error}</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button 
+              onClick={fetchData} 
+              className="bg-[#5bc0be] px-4 py-2 rounded-lg text-black font-semibold flex items-center justify-center gap-2 hover:bg-[#4aa8a6] transition-colors text-sm sm:text-base"
+            >
               <RefreshCw size={18} /> Coba Lagi
             </button>
-            <button onClick={() => navigate("/")} className="bg-gray-600 px-4 py-2 rounded-lg text-white font-semibold flex items-center gap-2 hover:bg-gray-700">
+            <button 
+              onClick={() => navigate("/")} 
+              className="bg-gray-600 px-4 py-2 rounded-lg text-white font-semibold flex items-center justify-center gap-2 hover:bg-gray-700 transition-colors text-sm sm:text-base"
+            >
               <Home size={18} /> Beranda
             </button>
           </div>
@@ -161,52 +169,178 @@ export default function TokoProduk() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
       {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
 
       {/* Header */}
-      <header className="bg-gray-800 py-6 px-4 text-center sticky top-0 z-50">
-        <button onClick={() => navigate(-1)} className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 p-2 rounded-lg hover:bg-white/20 transition">
-          <ArrowLeft size={20} />
-        </button>
-        <h1 className="text-2xl font-bold">{toko.nama}</h1>
-        <p className="text-gray-300">{toko.keterangan}</p>
-        <div className="flex justify-center gap-4 mt-4">
-          <button onClick={() => navigate("/keranjang")} className="flex items-center gap-2 bg-[#5bc0be] px-5 py-2 rounded-xl text-black font-semibold relative hover:bg-[#4aa8a6]">
-            <ShoppingCart size={20} /> Keranjang
-            {cartCount > 0 && <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{cartCount}</span>}
-          </button>
-          <button onClick={openWhatsApp} className="flex items-center gap-2 bg-green-500 px-5 py-2 rounded-xl text-black font-semibold hover:bg-green-600">
-            <MessageCircle size={20} /> Chat
-          </button>
+      <header className="bg-gray-800/90 backdrop-blur-sm py-4 px-3 sm:px-4 lg:px-6 sticky top-0 z-50 border-b border-gray-700">
+        <div className="max-w-6xl mx-auto">
+          {/* Navigation */}
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <button 
+              onClick={() => navigate(-1)} 
+              className="bg-white/10 p-2 rounded-lg hover:bg-white/20 transition-all duration-200 flex items-center gap-2"
+            >
+              <ArrowLeft size={18} className="sm:w-5 sm:h-5" />
+              <span className="text-xs sm:text-sm hidden sm:block">Kembali</span>
+            </button>
+            
+            <button 
+              onClick={() => navigate("/keranjang")} 
+              className="bg-[#5bc0be] p-2 rounded-lg text-black font-semibold relative hover:bg-[#4aa8a6] transition-colors flex items-center gap-2"
+            >
+              <ShoppingCart size={18} className="sm:w-5 sm:h-5" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                  {cartCount > 9 ? "9+" : cartCount}
+                </span>
+              )}
+              <span className="text-xs sm:text-sm hidden sm:block">Keranjang</span>
+            </button>
+          </div>
+
+          {/* Toko Info */}
+          <div className="text-center">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2 line-clamp-1">
+              {toko.nama}
+            </h1>
+            <p className="text-gray-300 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2">
+              {toko.keterangan}
+            </p>
+            
+            {/* Lokasi Toko */}
+            {toko.daerah && (
+              <div className="flex items-center justify-center gap-1 mb-3 sm:mb-4">
+                <MapPin size={14} className="text-[#5bc0be]" />
+                <span className="text-gray-400 text-xs sm:text-sm">{toko.daerah}</span>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
+              <button 
+                onClick={openWhatsApp} 
+                className="bg-green-500 px-4 sm:px-5 py-2 rounded-xl text-black font-semibold hover:bg-green-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base flex-1 sm:flex-none"
+              >
+                <MessageCircle size={18} className="sm:w-5 sm:h-5" />
+                <span>Chat Toko</span>
+              </button>
+            </div>
+          </div>
         </div>
       </header>
 
-      {/* Produk */}
-      <main className="max-w-6xl mx-auto p-4 mt-6">
-        <h2 className="text-2xl font-bold mb-6 text-center">Produk Kami</h2>
+      {/* Produk Section */}
+      <main className="max-w-6xl mx-auto p-3 sm:p-4 lg:p-6 mt-4 sm:mt-6">
+        <div className="text-center mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">Produk Kami</h2>
+          <p className="text-gray-400 text-sm sm:text-base">
+            {produk.length} produk tersedia
+          </p>
+        </div>
+
         {produk.length === 0 ? (
-          <div className="text-center py-12 text-gray-400">
-            <div className="text-6xl mb-4">📦</div>
-            <p>Belum ada produk di toko ini.</p>
+          <div className="text-center py-8 sm:py-12 lg:py-16 text-gray-400 bg-gray-800/50 rounded-2xl mx-2 sm:mx-0">
+            <div className="text-5xl sm:text-6xl mb-4">📦</div>
+            <p className="text-base sm:text-lg mb-2">Belum ada produk di toko ini.</p>
+            <p className="text-sm text-gray-500">Silakan hubungi toko untuk informasi lebih lanjut</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {produk.map((p) => (
-              <div key={p.id} className="bg-gray-800 p-4 rounded-xl shadow hover:shadow-[#5bc0be]/30 transition">
-                <h3 className="font-bold text-lg mb-2">{p.nama}</h3>
-                <p className="text-gray-300 text-sm mb-2 line-clamp-2">{p.deskripsi}</p>
-                <p className="text-yellow-400 font-bold mb-3">Rp {p.harga.toLocaleString('id-ID')}</p>
-                {p.foto_url?.length > 0 && <img src={p.foto_url[0]} alt={p.nama} className="w-full h-32 object-cover rounded-lg mb-3" />}
-                <div className="flex gap-2 mt-2">
-                  <button onClick={() => handleAddToCart(p)} className="flex-1 bg-[#5bc0be] py-2 rounded-lg font-semibold hover:bg-[#4aa8a6]">+ Keranjang</button>
-                  <button onClick={() => handleBuyNow(p)} className="flex-1 bg-green-500 py-2 rounded-lg font-semibold hover:bg-green-600">Beli</button>
+              <div 
+                key={p.id} 
+                className="bg-gray-800/80 backdrop-blur-sm p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-lg hover:shadow-[#5bc0be]/20 transition-all duration-300 border border-gray-700 hover:border-[#5bc0be]/30 group"
+              >
+                {/* Product Image */}
+                {p.foto_url?.length > 0 ? (
+                  <div className="relative overflow-hidden rounded-lg sm:rounded-xl mb-3 sm:mb-4">
+                    <img 
+                      src={p.foto_url[0]} 
+                      alt={p.nama} 
+                      className="w-full h-32 sm:h-40 lg:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
+                ) : (
+                  <div className="w-full h-32 sm:h-40 lg:h-48 bg-gray-700 rounded-lg sm:rounded-xl mb-3 sm:mb-4 flex items-center justify-center">
+                    <div className="text-4xl text-gray-500">📷</div>
+                  </div>
+                )}
+
+                {/* Product Info */}
+                <div className="flex-1">
+                  <h3 className="font-bold text-base sm:text-lg mb-1 sm:mb-2 line-clamp-2 group-hover:text-[#5bc0be] transition-colors">
+                    {p.nama}
+                  </h3>
+                  <p className="text-gray-300 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2 sm:line-clamp-3">
+                    {p.deskripsi || "Tidak ada deskripsi"}
+                  </p>
+                  <p className="text-yellow-400 font-bold text-sm sm:text-base mb-3 sm:mb-4">
+                    Rp {p.harga.toLocaleString('id-ID')}
+                  </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <button 
+                    onClick={() => handleAddToCart(p)} 
+                    className="flex-1 bg-[#5bc0be] py-2 sm:py-2.5 rounded-lg font-semibold hover:bg-[#4aa8a6] transition-colors text-xs sm:text-sm flex items-center justify-center gap-1"
+                  >
+                    <ShoppingCart size={14} className="sm:w-4 sm:h-4" />
+                    <span>Keranjang</span>
+                  </button>
+                  <button 
+                    onClick={() => handleBuyNow(p)} 
+                    className="flex-1 bg-green-500 py-2 sm:py-2.5 rounded-lg font-semibold hover:bg-green-600 transition-colors text-xs sm:text-sm"
+                  >
+                    Beli Langsung
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         )}
       </main>
+
+      {/* Floating Action Button for Mobile */}
+      <div className="fixed bottom-4 right-4 sm:hidden z-40">
+        <button 
+          onClick={() => navigate("/keranjang")} 
+          className="bg-[#5bc0be] p-3 rounded-full text-black font-semibold relative hover:bg-[#4aa8a6] transition-colors shadow-lg"
+        >
+          <ShoppingCart size={20} />
+          {cartCount > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+              {cartCount > 9 ? "9+" : cartCount}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* Bottom Navigation for Mobile */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-3 sm:hidden z-30">
+        <div className="flex justify-between items-center">
+          <button 
+            onClick={() => navigate(-1)} 
+            className="flex flex-col items-center text-gray-400 hover:text-white transition-colors"
+          >
+            <ArrowLeft size={20} />
+            <span className="text-xs mt-1">Kembali</span>
+          </button>
+          <button 
+            onClick={openWhatsApp} 
+            className="flex flex-col items-center text-gray-400 hover:text-white transition-colors"
+          >
+            <MessageCircle size={20} />
+            <span className="text-xs mt-1">Chat</span>
+          </button>
+        </div>
+      </nav>
+
+      {/* Add padding for mobile bottom nav */}
+      <div className="pb-16 sm:pb-0"></div>
     </div>
   );
 }
