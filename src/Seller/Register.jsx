@@ -350,7 +350,7 @@ export default function RegisterToko() {
           <p className="text-gray-400">
             Sudah punya akun?{" "}
             <Link
-              to="/Login-Seller"
+              to="/Login-Seler"
               className="text-yellow-400 hover:text-yellow-500 font-semibold transition-colors duration-300"
             >
               Login di sini
@@ -360,4 +360,5 @@ export default function RegisterToko() {
       </div>
     </div>
   );
+
 }
