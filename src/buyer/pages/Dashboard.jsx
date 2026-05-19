@@ -83,6 +83,7 @@ export default function Dashboard() {
               <div className="text-center sm:text-left">
                 <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">
                   <span className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-400 dark:to-blue-500 bg-clip-text text-transparent">
+SMOKEY
          
                   </span>{" "}
                   <span className="text-gray-700 dark:text-gray-300">Dashboard</span>
