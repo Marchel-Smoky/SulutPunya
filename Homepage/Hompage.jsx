@@ -8,13 +8,13 @@ export default function HomePage() {
       <section className="flex flex-col items-center justify-center text-center py-14 sm:py-16 md:py-20 px-4 sm:px-6">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow-lg leading-tight">
           Selamat Datang di{" "}
-          <span className="text-purple-400">Smoky Store</span>
+          <span className="text-purple-400">Smokey Store</span>
         </h1>
 
         <p className="mt-4 text-sm sm:text-base md:text-lg text-gray-300 max-w-xl md:max-w-2xl leading-relaxed">
           Toko online terpercaya untuk produk unik, berkualitas, dan bergaya.
           Belanja lebih mudah, cepat, dan aman hanya di{" "}
-          <span className="text-purple-300 font-semibold">Smoky</span>.
+          <span className="text-purple-300 font-semibold">Smokey</span>.
         </p>
 
         <button className="mt-6 px-5 sm:px-6 py-2.5 sm:py-3 bg-purple-500 hover:bg-purple-600 rounded-xl sm:rounded-2xl shadow-lg text-sm sm:text-base md:text-lg font-semibold transition-all">
@@ -25,7 +25,7 @@ export default function HomePage() {
       {/* Keuntungan Section */}
       <section className="py-12 sm:py-14 md:py-16 px-4 sm:px-6 md:px-8 bg-gray-950 rounded-t-3xl shadow-2xl">
         <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10 md:mb-12">
-          Kenapa Pilih <span className="text-purple-400">Smoky?</span>
+          Kenapa Pilih <span className="text-purple-400">Smokey?</span>
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 md:gap-10 max-w-6xl mx-auto">
@@ -72,7 +72,7 @@ export default function HomePage() {
             Dapatkan penawaran spesial dan diskon eksklusif setiap minggunya
             hanya di{" "}
             <span className="text-purple-300 font-semibold">
-              Smoky Store
+              Smokey Store
             </span>.
           </p>
 
@@ -84,7 +84,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="py-5 sm:py-6 text-center text-gray-400 text-xs sm:text-sm">
-        © 2025 Smoky Store. Semua Hak Dilindungi.
+        © 2025 Smokey Store. Semua Hak Dilindungi.
       </footer>
     </div>
   );
